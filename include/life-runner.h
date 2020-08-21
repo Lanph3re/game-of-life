@@ -24,9 +24,10 @@ class LifeRunner {
 
   bool is_curse_enabled;
   bool do_run_;
-  std::unique_ptr<GameOfLife> game_of_life_;
   char cmd_buffer_[CMD_BUFFER_SIZE];
   char* cursor_;
+
+  GameOfLife game_of_life_;
 };
 
 #endif

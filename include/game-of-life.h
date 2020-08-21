@@ -25,6 +25,7 @@ class GameOfLife {
   int GetSafeIndex(int i, int length);
   std::pair<int, int> GetNeighbor(const std::pair<int, int>& cell, int i);
 
+  bool IsAlive(int row_idx, int col_idx);
   bool IsAlive(const std::pair<int, int>& cell);
   size_t GetLiveNeighbors(const std::pair<int, int>& cell);
 
@@ -54,7 +55,7 @@ class GameOfLife {
   std::set<std::pair<int, int> > inspect_;
   std::set<std::pair<int, int> > pending_;
 
-  std::unique_ptr<std::vector<std::vector<bool> > > board_;
+  std::vector<std::vector<bool> > board_;
 };
 
 #endif

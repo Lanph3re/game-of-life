@@ -1,9 +1,8 @@
 #include "../include/game-of-life.h"
 
 GameOfLife::GameOfLife(int row_length, int col_length)
-    : row_length_(row_length), col_length_(col_length) {
-  board_.reset(std::move(new std::vector<std::vector<bool> >(row_length_)));
-  for (auto row = board_->begin(); row != board_->end(); ++row)
+    : row_length_(row_length), col_length_(col_length), board_(row_length) {
+  for (auto row = board_.begin(); row != board_.end(); ++row)
     row->resize(col_length_, false);
 }
 
@@ -44,25 +43,25 @@ void GameOfLife::NextGeneration() {
 
   // Apply all pending changes to board
   for (auto pending : pending_) {
-    board_->at(pending.first).at(pending.second) =
-        !board_->at(pending.first).at(pending.second);
+    board_[pending.first][pending.second] =
+        !board_[pending.first][pending.second];
   }
 }
 
 void GameOfLife::TestInit() {
-  (*board_)[3][3] = true;
-  (*board_)[3][4] = true;
-  (*board_)[3][5] = true;
-  (*board_)[3][6] = true;
-  (*board_)[3][7] = true;
-  (*board_)[3][8] = true;
-  (*board_)[4][2] = true;
-  (*board_)[4][8] = true;
-  (*board_)[5][8] = true;
-  (*board_)[6][2] = true;
-  (*board_)[6][7] = true;
-  (*board_)[7][4] = true;
-  (*board_)[7][5] = true;
+  board_[3][3] = true;
+  board_[3][4] = true;
+  board_[3][5] = true;
+  board_[3][6] = true;
+  board_[3][7] = true;
+  board_[3][8] = true;
+  board_[4][2] = true;
+  board_[4][8] = true;
+  board_[5][8] = true;
+  board_[6][2] = true;
+  board_[6][7] = true;
+  board_[7][4] = true;
+  board_[7][5] = true;
 
   live_.insert(std::make_pair(3, 3));
   live_.insert(std::make_pair(3, 4));
@@ -84,8 +83,12 @@ int GameOfLife::GetSafeIndex(int i, int length) {
   return i % length >= 0 ? (i % length) : (i + length);
 }
 
+bool GameOfLife::IsAlive(int row_idx, int col_idx) {
+  return board_[row_idx][col_idx];
+}
+
 bool GameOfLife::IsAlive(const std::pair<int, int>& cell) {
-  return board_->at(cell.first).at(cell.second);
+  return board_[cell.first][cell.second];
 }
 
 std::pair<int, int> GameOfLife::GetNeighbor(const std::pair<int, int>& cell,

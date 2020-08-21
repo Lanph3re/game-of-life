@@ -24,10 +24,12 @@
   }
 
 LifeRunner::LifeRunner(int row_length, int col_length)
-    : is_curse_enabled(false), do_run_(false), cursor_(cmd_buffer_) {
-  game_of_life_.reset(std::move(new GameOfLife(row_length, col_length)));
+    : is_curse_enabled(false),
+      do_run_(false),
+      cursor_(cmd_buffer_),
+      game_of_life_(row_length, col_length) {
   memset(cmd_buffer_, 0, 256);
-  game_of_life_->TestInit();
+  game_of_life_.TestInit();
 }
 
 LifeRunner::~LifeRunner() {}
@@ -37,10 +39,10 @@ void LifeRunner::PrintLife() {
     return;
 
 #define LIFE_FIRST_ROW_OFFSET 2
-  for (int row_idx = 0; row_idx < game_of_life_->row_length_; ++row_idx) {
-    for (int col_idx = 0; col_idx < game_of_life_->col_length_; ++col_idx) {
+  for (int row_idx = 0; row_idx < game_of_life_.row_length_; ++row_idx) {
+    for (int col_idx = 0; col_idx < game_of_life_.col_length_; ++col_idx) {
       mvprintw(row_idx + LIFE_FIRST_ROW_OFFSET, col_idx * 3,
-               game_of_life_->board_->at(row_idx).at(col_idx) ? " O " : " . ");
+               game_of_life_.IsAlive(row_idx, col_idx) ? " O " : " . ");
     }
   }
   refresh();
@@ -78,7 +80,7 @@ void LifeRunner::RunIOThread() {
 void LifeRunner::RunRenderThread() {
   for (;;) {
     if (do_run_) {
-      game_of_life_->NextGeneration();
+      game_of_life_.NextGeneration();
       PrintLife();
     }
 
