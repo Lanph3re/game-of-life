@@ -20,19 +20,21 @@ class GameOfLife {
   void TestInit(void);
 
  private:
+  using Cell = std::pair<int, int>;
+
   friend class LifeRunner;
 
   int GetSafeIndex(int i, int length);
-  std::pair<int, int> GetNeighbor(const std::pair<int, int>& cell, int i);
+  Cell GetNeighbor(const Cell& cell, int i);
 
   bool IsAlive(int row_idx, int col_idx);
-  bool IsAlive(const std::pair<int, int>& cell);
-  size_t GetLiveNeighbors(const std::pair<int, int>& cell);
+  bool IsAlive(const Cell& cell);
+  size_t GetLiveNeighbors(const Cell& cell);
 
-  bool IsUnderpopulated(const std::pair<int, int>& cell);
-  bool IsSurvived(const std::pair<int, int>& cell);
-  bool IsOverpopulated(const std::pair<int, int>& cell);
-  bool IsRevived(const std::pair<int, int>& cell);
+  bool IsUnderpopulated(const Cell& cell);
+  bool IsSurvived(const Cell& cell);
+  bool IsOverpopulated(const Cell& cell);
+  bool IsRevived(const Cell& cell);
 
   int row_length_;
   int col_length_;
@@ -51,9 +53,9 @@ class GameOfLife {
   // live_ contains the corordinates of live cells for fast lookup
   // inspect_ has all live cells plus their neighbor cells
   // pending_ stores pending changes to be applied to next generation
-  std::set<std::pair<int, int> > live_;
-  std::set<std::pair<int, int> > inspect_;
-  std::set<std::pair<int, int> > pending_;
+  std::set<Cell> live_;
+  std::set<Cell> inspect_;
+  std::set<Cell> pending_;
 
   std::vector<std::vector<bool> > board_;
 };

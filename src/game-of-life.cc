@@ -87,37 +87,38 @@ bool GameOfLife::IsAlive(int row_idx, int col_idx) {
   return board_[row_idx][col_idx];
 }
 
-bool GameOfLife::IsAlive(const std::pair<int, int>& cell) {
+using Cell = std::pair<int, int>;
+
+bool GameOfLife::IsAlive(const Cell& cell) {
   return board_[cell.first][cell.second];
 }
 
-std::pair<int, int> GameOfLife::GetNeighbor(const std::pair<int, int>& cell,
-                                            int i) {
+Cell GameOfLife::GetNeighbor(const Cell& cell, int i) {
   return std::make_pair(
       GetSafeIndex(cell.first + kNeighborDiffs[i][0], row_length_),
       GetSafeIndex(cell.second + kNeighborDiffs[i][1], col_length_));
 }
 
-size_t GameOfLife::GetLiveNeighbors(const std::pair<int, int>& cell) {
+size_t GameOfLife::GetLiveNeighbors(const Cell& cell) {
   return std::count_if(kNeighborIndices, kNeighborIndices + kNumNeighbors,
                        [this, &cell](int neighbor_index) {
                          return IsAlive(GetNeighbor(cell, neighbor_index));
                        });
 }
 
-bool GameOfLife::IsUnderpopulated(const std::pair<int, int>& cell) {
+bool GameOfLife::IsUnderpopulated(const Cell& cell) {
   return IsAlive(cell) && GetLiveNeighbors(cell) < kUnderpopulation;
 }
 
-bool GameOfLife::IsSurvived(const std::pair<int, int>& cell) {
+bool GameOfLife::IsSurvived(const Cell& cell) {
   return IsAlive(cell) && GetLiveNeighbors(cell) >= kUnderpopulation &&
          GetLiveNeighbors(cell) <= kSurvival;
 }
 
-bool GameOfLife::IsOverpopulated(const std::pair<int, int>& cell) {
+bool GameOfLife::IsOverpopulated(const Cell& cell) {
   return IsAlive(cell) && GetLiveNeighbors(cell) > kOverpopulation;
 }
 
-bool GameOfLife::IsRevived(const std::pair<int, int>& cell) {
+bool GameOfLife::IsRevived(const Cell& cell) {
   return !IsAlive(cell) && GetLiveNeighbors(cell) == kRevival;
 }
