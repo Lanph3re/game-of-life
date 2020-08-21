@@ -4,6 +4,7 @@
 
 #define CURSE_INIT(runner)           \
   {                                  \
+    signal(SIGINT, handler);         \
     runner->is_curse_enabled = true; \
     initscr();                       \
     cbreak();                        \
@@ -22,6 +23,25 @@
     mvprintw(0, 0, ">> %s", (buf));      \
     refresh();                           \
   }
+
+#define LOG(msg)                 \
+  {                              \
+    move(1, 0);                  \
+    clrtoeol();                  \
+    mvprintw(1, 0, "%s", (msg)); \
+    refresh();                   \
+  }
+
+#define CLEAR_ERR() \
+  {                 \
+    move(1, 0);     \
+    clrtoeol();     \
+    refresh();      \
+  }
+
+void handler(int sig) {
+  LOG("Type 'quit' to exit");
+}
 
 LifeRunner::LifeRunner(int row_length, int col_length)
     : is_curse_enabled(false),
@@ -90,43 +110,46 @@ void LifeRunner::RunRenderThread() {
 }
 
 bool LifeRunner::ProcessCommand() {
+  bool has_error = false;
   std::string cmd(cmd_buffer_);
+
+  if (cmd.empty()) {
+    CLEAR_ERR();
+    return true;
+  }
+
   if (!cmd.compare("quit")) {
     endwin();
     return false;
   }
 
   if (!cmd.compare("start")) {
-    if (!do_run_)
+    if (!do_run_) {
       do_run_ = true;
+      CLEAR_ERR();
+    } else {
+      LOG("Life is running");
+    }
+
     return true;
   }
 
   if (!cmd.compare("stop")) {
-    if (do_run_)
+    if (do_run_) {
       do_run_ = false;
+      CLEAR_ERR();
+    } else {
+      LOG("Life is not running");
+    }
+
     return true;
   }
 
   // TODO: create new life
-  if (!cmd.compare("create")) {
-    return true;
-  }
-
   // TODO: edit the current life
-  if (!cmd.compare("edit")) {
-    return true;
-  }
-
   // TODO: load existing life
-  if (!cmd.compare("load")) {
-    return true;
-  }
-
   // TODO: dump the current life
-  if (!cmd.compare("dump")) {
-    return true;
-  }
+  LOG("Undefined command");
 
   return true;
 }

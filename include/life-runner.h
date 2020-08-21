@@ -2,7 +2,9 @@
 #define LIFE_RUNNER_H
 
 #include <curses.h>
+#include <algorithm>
 #include <chrono>
+#include <csignal>
 #include <string>
 #include <thread>
 #include "../include/game-of-life.h"
