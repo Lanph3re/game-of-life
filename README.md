@@ -7,7 +7,7 @@ Implemented code is using C++17.
 - start
 - stop
 - edit
-  - Key for edit follows vim-style (HJKL for cursor, and X for mark/unmarking a cell).
+  - Key for editing follows vim-style (HJKL for cursor, and X for mark/unmarking a cell).
   - Press ESC to stop editing.
 - rand
 
