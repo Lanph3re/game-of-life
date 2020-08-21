@@ -8,6 +8,22 @@ GameOfLife::GameOfLife(int row_length, int col_length)
 
 GameOfLife::~GameOfLife() {}
 
+void GameOfLife::RandomInit(void) {
+  static bool seed = false;
+  if (!seed) {
+    seed = true;
+    srand(time(0));
+  }
+
+  for (int row_idx = 0; row_idx < GetRowLength(); ++row_idx) {
+    for (int col_idx = 0; col_idx < GetColLength(); ++col_idx)
+      board_[row_idx][col_idx] = false;
+  }
+
+  for (int i = 0; i < 300; ++i)
+    FlipCell(rand() % GetRowLength(), rand() % GetColLength());
+}
+
 int GameOfLife::GetRowLength() {
   return row_length_;
 }
@@ -39,36 +55,6 @@ void GameOfLife::NextGeneration() {
   // Apply all pending changes to board
   for (auto pending : pending_)
     FlipCell(pending);
-}
-
-void GameOfLife::TestInit() {
-  board_[3][3] = true;
-  board_[3][4] = true;
-  board_[3][5] = true;
-  board_[3][6] = true;
-  board_[3][7] = true;
-  board_[3][8] = true;
-  board_[4][2] = true;
-  board_[4][8] = true;
-  board_[5][8] = true;
-  board_[6][2] = true;
-  board_[6][7] = true;
-  board_[7][4] = true;
-  board_[7][5] = true;
-
-  live_.insert(std::make_pair(3, 3));
-  live_.insert(std::make_pair(3, 4));
-  live_.insert(std::make_pair(3, 5));
-  live_.insert(std::make_pair(3, 6));
-  live_.insert(std::make_pair(3, 7));
-  live_.insert(std::make_pair(3, 8));
-  live_.insert(std::make_pair(4, 2));
-  live_.insert(std::make_pair(4, 8));
-  live_.insert(std::make_pair(5, 8));
-  live_.insert(std::make_pair(6, 2));
-  live_.insert(std::make_pair(6, 7));
-  live_.insert(std::make_pair(7, 4));
-  live_.insert(std::make_pair(7, 5));
 }
 
 // Modular function

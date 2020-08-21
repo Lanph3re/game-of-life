@@ -57,7 +57,7 @@ LifeRunner::LifeRunner(int row_length, int col_length)
       cursor_(cmd_buffer_),
       game_of_life_(row_length, col_length) {
   memset(cmd_buffer_, 0, 256);
-  game_of_life_.TestInit();
+  game_of_life_.RandomInit();
 }
 
 LifeRunner::~LifeRunner() {}
@@ -200,25 +200,34 @@ bool LifeRunner::ProcessCommand() {
     return true;
   }
 
-  // TODO: create new life
-  // TODO: edit the current life
-  // TODO: load existing life
-  // TODO: dump the current life
-  LOG("Undefined command");
+  if (!cmd.compare("rand")) {
+    if (do_run_) {
+      LOG("Life is running");
+    } else {
+      game_of_life_.RandomInit();
+      PrintLife();
+      CLEAR_ERR();
+    }
 
+    return true;
+  }
+
+  LOG("Undefined command");
   return true;
 }
 
 void LifeRunner::PrintLife() {
+  std::string line_buffer;
   if (!is_curse_enabled)
     return;
 
   for (int row_idx = 0; row_idx < game_of_life_.GetRowLength(); ++row_idx) {
-    for (int col_idx = 0; col_idx < game_of_life_.GetColLength(); ++col_idx) {
-      mvprintw(row_idx + LIFE_FIRST_ROW_OFFSET, col_idx * 3,
-               game_of_life_.IsAlive(row_idx, col_idx) ? " O " : " . ");
-    }
+    for (int col_idx = 0; col_idx < game_of_life_.GetColLength(); ++col_idx)
+      line_buffer += game_of_life_.IsAlive(row_idx, col_idx) ? " O " : " . ";
+
+    line_buffer += '\n';
   }
+  mvprintw(LIFE_FIRST_ROW_OFFSET, 0, line_buffer.c_str());
 }
 
 void LifeRunner::MoveCursor(int x, int y) {

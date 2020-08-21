@@ -2,6 +2,7 @@
 #define GAME_OF_LIFE_H_
 
 #include <algorithm>
+#include <ctime>
 #include <iostream>
 #include <memory>
 #include <set>
@@ -15,6 +16,8 @@ class GameOfLife {
   GameOfLife(int width, int height);
   ~GameOfLife();
 
+  void RandomInit(void);
+
   int GetRowLength();
   int GetColLength();
   int GetSafeIndex(int i, int length);
@@ -23,7 +26,6 @@ class GameOfLife {
   void FlipCell(int row_idx, int col_idx);
 
   void NextGeneration();
-  void TestInit(void);
 
  private:
   friend class LifeRunner;
