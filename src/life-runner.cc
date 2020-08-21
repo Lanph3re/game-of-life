@@ -2,26 +2,29 @@
 
 #define BACKSPACE 127
 
-#define CURSE_INIT()             \
-  {                              \
-    initscr();                   \
-    cbreak();                    \
-    noecho();                    \
-    timeout(100);                \
-    game_of_life_->PrintBoard(); \
-    refresh();                   \
+#define CURSE_INIT(runner)           \
+  {                                  \
+    runner->is_curse_enabled = true; \
+    initscr();                       \
+    cbreak();                        \
+    noecho();                        \
+    timeout(100);                    \
+    runner->PrintLife();             \
   }
 
-#define RENDER_WITH_CMDLINE(game_of_life, buf) \
-  {                                            \
-    move(0, 0);                                \
-    clrtoeol();                                \
-    mvprintw(0, 0, ">> %s", (buf));            \
-    refresh();                                 \
+#define RENDER_WITH_CMDLINE(runner, buf) \
+  {                                      \
+    if (!runner->is_curse_enabled)       \
+      return;                            \
+                                         \
+    move(0, 0);                          \
+    clrtoeol();                          \
+    mvprintw(0, 0, ">> %s", (buf));      \
+    refresh();                           \
   }
 
 LifeRunner::LifeRunner(int row_length, int col_length)
-    : do_run_(false), cursor_(cmd_buffer_) {
+    : is_curse_enabled(false), do_run_(false), cursor_(cmd_buffer_) {
   game_of_life_.reset(std::move(new GameOfLife(row_length, col_length)));
   memset(cmd_buffer_, 0, 256);
   game_of_life_->TestInit();
@@ -29,8 +32,22 @@ LifeRunner::LifeRunner(int row_length, int col_length)
 
 LifeRunner::~LifeRunner() {}
 
+void LifeRunner::PrintLife() {
+  if (!is_curse_enabled)
+    return;
+
+#define LIFE_FIRST_ROW_OFFSET 2
+  for (int row_idx = 0; row_idx < game_of_life_->row_length_; ++row_idx) {
+    for (int col_idx = 0; col_idx < game_of_life_->col_length_; ++col_idx) {
+      mvprintw(row_idx + LIFE_FIRST_ROW_OFFSET, col_idx * 3,
+               game_of_life_->board_->at(row_idx).at(col_idx) ? " O " : " . ");
+    }
+  }
+  refresh();
+}
+
 void LifeRunner::Run() {
-  CURSE_INIT();
+  CURSE_INIT(this);
   std::thread render_thread([this]() { this->RunRenderThread(); });
   std::thread io_thread([this]() { this->RunIOThread(); });
   render_thread.detach();
@@ -61,11 +78,11 @@ void LifeRunner::RunIOThread() {
 void LifeRunner::RunRenderThread() {
   for (;;) {
     if (do_run_) {
-      game_of_life_->PrintBoard();
       game_of_life_->NextGeneration();
+      PrintLife();
     }
 
-    RENDER_WITH_CMDLINE(game_of_life_, cmd_buffer_);
+    RENDER_WITH_CMDLINE(this, cmd_buffer_);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }

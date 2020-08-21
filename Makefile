@@ -14,5 +14,5 @@ life-runner.o: include/life-runner.h include/game-of-life.h src/life-runner.cc
 	g++ -c src/life-runner.cc -std=c++17
 
 clean:
-	rm -f *.o
+	rm -f *.o game-of-life
 

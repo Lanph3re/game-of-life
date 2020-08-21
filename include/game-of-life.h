@@ -1,7 +1,6 @@
 #ifndef GAME_OF_LIFE_H_
 #define GAME_OF_LIFE_H_
 
-#include <curses.h>
 #include <algorithm>
 #include <iostream>
 #include <memory>
@@ -17,11 +16,12 @@ class GameOfLife {
   int GetRowLength();
   int GetColLength();
 
-  void PrintBoard();
   void NextGeneration();
   void TestInit(void);
 
  private:
+  friend class LifeRunner;
+
   int GetSafeIndex(int i, int length);
   std::pair<int, int> GetNeighbor(const std::pair<int, int>& cell, int i);
 

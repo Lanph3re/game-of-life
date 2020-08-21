@@ -15,12 +15,14 @@ class LifeRunner {
   ~LifeRunner();
 
   void Run();
+  void PrintLife();
 
  private:
   void RunIOThread();
   void RunRenderThread();
   bool ProcessCommand();
 
+  bool is_curse_enabled;
   bool do_run_;
   std::unique_ptr<GameOfLife> game_of_life_;
   char cmd_buffer_[CMD_BUFFER_SIZE];

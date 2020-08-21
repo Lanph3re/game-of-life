@@ -17,16 +17,6 @@ int GameOfLife::GetColLength() {
   return col_length_;
 }
 
-void GameOfLife::PrintBoard() {
-#define LIFE_FIRST_ROW_OFFSET 2
-  for (int row_idx = 0; row_idx < row_length_; ++row_idx) {
-    for (int col_idx = 0; col_idx < col_length_; ++col_idx) {
-      mvprintw(row_idx + LIFE_FIRST_ROW_OFFSET, col_idx * 3,
-               board_->at(row_idx).at(col_idx) ? " O " : " . ");
-    }
-  }
-}
-
 void GameOfLife::NextGeneration() {
   inspect_.clear();
   pending_.clear();
