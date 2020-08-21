@@ -8,18 +8,22 @@ GameOfLife::GameOfLife(int row_length, int col_length)
 
 GameOfLife::~GameOfLife() {}
 
-void GameOfLife::RandomInit(void) {
+void GameOfLife::Clear() {
+  live_.clear();
+  for (int row_idx = 0; row_idx < GetRowLength(); ++row_idx) {
+    for (int col_idx = 0; col_idx < GetColLength(); ++col_idx)
+      board_[row_idx][col_idx] = false;
+  }
+}
+
+void GameOfLife::RandomInit() {
   static bool seed = false;
   if (!seed) {
     seed = true;
     srand(time(0));
   }
 
-  for (int row_idx = 0; row_idx < GetRowLength(); ++row_idx) {
-    for (int col_idx = 0; col_idx < GetColLength(); ++col_idx)
-      board_[row_idx][col_idx] = false;
-  }
-
+  Clear();
   for (int i = 0; i < 300; ++i)
     FlipCell(rand() % GetRowLength(), rand() % GetColLength());
 }
