@@ -16,7 +16,8 @@ class GameOfLife {
   GameOfLife(int width, int height);
   ~GameOfLife();
 
-  void RandomInit(void);
+  void Clear();
+  void RandomInit();
 
   int GetRowLength();
   int GetColLength();

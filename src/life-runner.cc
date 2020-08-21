@@ -212,6 +212,18 @@ bool LifeRunner::ProcessCommand() {
     return true;
   }
 
+  if (!cmd.compare("clear")) {
+    if (do_run_) {
+      LOG("Life is running");
+    } else {
+      game_of_life_.Clear();
+      PrintLife();
+      CLEAR_ERR();
+    }
+
+    return true;
+  }
+
   LOG("Undefined command");
   return true;
 }
