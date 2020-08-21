@@ -23,6 +23,7 @@
     timeout(100);                            \
     runner->PrintLife();                     \
     RENDER_WITH_CMDLINE(runner, cmd_buffer_) \
+    refresh();                               \
   }
 
 #define RENDER_WITH_CMDLINE(runner, buf) \
@@ -30,7 +31,6 @@
     move(0, 0);                          \
     clrtoeol();                          \
     mvprintw(0, 0, ">> %s", (buf));      \
-    refresh();                           \
   }
 
 #define LOG(msg)                 \
@@ -38,14 +38,12 @@
     move(1, 0);                  \
     clrtoeol();                  \
     mvprintw(1, 0, "%s", (msg)); \
-    refresh();                   \
   }
 
 #define CLEAR_ERR() \
   {                 \
     move(1, 0);     \
     clrtoeol();     \
-    refresh();      \
   }
 
 void handler(int sig) {
@@ -116,6 +114,7 @@ void LifeRunner::RunIOThread() {
 
           cursor_ = cmd_buffer_;
           *cursor_ = 0;
+          RENDER_WITH_CMDLINE(this, cmd_buffer_);
         } else if (ch == BACKSPACE) {
           if (cursor_ > cmd_buffer_)
             *--cursor_ = 0;
@@ -124,7 +123,6 @@ void LifeRunner::RunIOThread() {
           *cursor_ = 0;
         }
 
-        RENDER_WITH_CMDLINE(this, cmd_buffer_);
         if (is_edit_mode)
           move(LIFE_FIRST_ROW_OFFSET, LIFE_FIRST_COL_OFFSET);
       }
@@ -133,12 +131,25 @@ void LifeRunner::RunIOThread() {
 }
 
 void LifeRunner::RunRenderThread() {
+  int x, y;
+
   for (;;) {
+    if (is_edit_mode) {
+      getyx(curscr, x, y);
+    }
+
     if (do_run_) {
       game_of_life_.NextGeneration();
       PrintLife();
     }
 
+    if (is_edit_mode) {
+      move(x, y);
+    } else {
+      RENDER_WITH_CMDLINE(this, cmd_buffer_);
+    }
+
+    refresh();
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
   }
 }
@@ -208,7 +219,6 @@ void LifeRunner::PrintLife() {
                game_of_life_.IsAlive(row_idx, col_idx) ? " O " : " . ");
     }
   }
-  refresh();
 }
 
 void LifeRunner::MoveCursor(int x, int y) {
