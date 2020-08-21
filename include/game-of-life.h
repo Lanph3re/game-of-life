@@ -8,6 +8,8 @@
 #include <utility>
 #include <vector>
 
+using Cell = std::pair<int, int>;
+
 class GameOfLife {
  public:
   GameOfLife(int width, int height);
@@ -15,20 +17,21 @@ class GameOfLife {
 
   int GetRowLength();
   int GetColLength();
+  int GetSafeIndex(int i, int length);
+
+  void FlipCell(const Cell& cell);
+  void FlipCell(int row_idx, int col_idx);
 
   void NextGeneration();
   void TestInit(void);
 
  private:
-  using Cell = std::pair<int, int>;
-
   friend class LifeRunner;
-
-  int GetSafeIndex(int i, int length);
-  Cell GetNeighbor(const Cell& cell, int i);
 
   bool IsAlive(int row_idx, int col_idx);
   bool IsAlive(const Cell& cell);
+
+  Cell GetNeighbor(const Cell& cell, int i);
   size_t GetLiveNeighbors(const Cell& cell);
 
   bool IsUnderpopulated(const Cell& cell);

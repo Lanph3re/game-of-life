@@ -1,5 +1,5 @@
 all: main.o game-of-life.o life-runner.o
-	g++ -o game-of-life -std=c++17 -lcurses \
+	g++ -o game-of-life -std=c++17 -lncurses \
 		main.o \
 		life-runner.o \
 		game-of-life.o

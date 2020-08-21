@@ -1,7 +1,7 @@
 #ifndef LIFE_RUNNER_H
 #define LIFE_RUNNER_H
 
-#include <curses.h>
+#include <ncurses.h>
 #include <chrono>
 #include <csignal>
 #include <string>
@@ -16,14 +16,18 @@ class LifeRunner {
   ~LifeRunner();
 
   void Run();
-  void PrintLife();
 
  private:
   void RunIOThread();
   void RunRenderThread();
   bool ProcessCommand();
 
+  void PrintLife();
+  void MoveCursor(int x, int y);
+  void FlipCell(int x, int y);
+
   bool is_curse_enabled;
+  bool is_edit_mode;
   bool do_run_;
   char cmd_buffer_[CMD_BUFFER_SIZE];
   char* cursor_;

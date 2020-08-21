@@ -30,22 +30,15 @@ void GameOfLife::NextGeneration() {
     if (IsSurvived(inspect))
       continue;
 
-    if (IsUnderpopulated(inspect) || IsOverpopulated(inspect)) {
-      live_.erase(inspect);
-      pending_.insert(inspect);
-    }
-
-    if (IsRevived(inspect)) {
-      live_.insert(inspect);
+    if (IsUnderpopulated(inspect) || IsOverpopulated(inspect) ||
+        IsRevived(inspect)) {
       pending_.insert(inspect);
     }
   }
 
   // Apply all pending changes to board
-  for (auto pending : pending_) {
-    board_[pending.first][pending.second] =
-        !board_[pending.first][pending.second];
-  }
+  for (auto pending : pending_)
+    FlipCell(pending);
 }
 
 void GameOfLife::TestInit() {
@@ -81,6 +74,19 @@ void GameOfLife::TestInit() {
 // Modular function
 int GameOfLife::GetSafeIndex(int i, int length) {
   return i % length >= 0 ? (i % length) : (i + length);
+}
+
+void GameOfLife::FlipCell(const Cell& cell) {
+  FlipCell(cell.first, cell.second);
+}
+
+void GameOfLife::FlipCell(int row_idx, int col_idx) {
+  if (!IsAlive(row_idx, col_idx)) {
+    live_.insert(std::make_pair(row_idx, col_idx));
+  } else {
+    live_.erase(std::make_pair(row_idx, col_idx));
+  }
+  board_[row_idx][col_idx] = !board_[row_idx][col_idx];
 }
 
 bool GameOfLife::IsAlive(int row_idx, int col_idx) {
