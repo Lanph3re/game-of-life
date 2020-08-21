@@ -110,7 +110,6 @@ void LifeRunner::RunRenderThread() {
 }
 
 bool LifeRunner::ProcessCommand() {
-  bool has_error = false;
   std::string cmd(cmd_buffer_);
 
   if (cmd.empty()) {
